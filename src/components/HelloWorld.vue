@@ -72,6 +72,14 @@
                         <label>Color: </label>
                         <br>
                         <input type="color" v-model="icon.color">
+                        <br>
+                        <label>Colores guardados: </label>
+                        <br>
+                        <div class="saved-colors-container">
+                            <div class="color-button" style="background-color: #E12D2F;" v-on:click="restore_saved_color"></div>
+                            <div class="color-button" style="background-color: #61c2f2;" v-on:click="restore_saved_color"></div>
+                        </div>
+             
                         <!--
                             <select v-model="icon.color" class="form-control" value="#20ff41">
                             <option value="#99e1e5">#99e1e5</option>
@@ -132,6 +140,9 @@ export default {
         html2canvas(document.getElementById("capture"), {allowTaint: true}).then(function(canvas) {
             document.body.appendChild(canvas);
         });
+    },
+    restore_saved_color: function(event){
+        this.icon.color = event.currentTarget.style.backgroundColor
     }
   },
   data: function(){ return{

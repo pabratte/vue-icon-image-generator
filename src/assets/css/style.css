@@ -1,5 +1,5 @@
-body{
-    background: #cccccc;
+#app{
+    background: #deecef;
     padding: 20px;
 }
 
@@ -29,7 +29,6 @@ form .form-group{
     background: white;
     margin: auto auto;
     overflow: hidden;
-    border: 1px solid black;
 }
 
 .bg-div{
@@ -56,4 +55,19 @@ form .form-group{
     display: flex;
     justify-content: center;
     align-items: center; 
+}
+
+.saved-colors-container{
+    clear: both;
+}
+
+.color-button{
+    margin: 5px;
+    float: left;
+    width: 30px;
+    height: 30px;
+}
+
+.color-button:hover{
+    cursor: pointer;
 }
