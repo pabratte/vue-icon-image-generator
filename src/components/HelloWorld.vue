@@ -2,7 +2,7 @@
   <div class="hello">
     <div id="app" class="container">
             <div class="row">
-            <div class="col-md-6" >
+            <div class="col-md-6" style="position: fixed; top: 150px; left: 70px;" >
                 <div class="row">                
                     <div id="capture" class="myCanvas" v-bind:style="{width: canvas.size+'px', height: canvas.size+'px'}" >
                         <div  style="width: 100%; height: 100%;" v-bind:style="{backgroundcolor: canvas.background}">
@@ -32,7 +32,7 @@
                     
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 offset-md-6" >
                 <form>
                     <h2>Canvas</h2>
                     <div class="form-group">
@@ -65,7 +65,7 @@
                         </v-select>
                         <br>
                         <label>Size: [{{icon.size}}px]</label>
-                        <input type="range" v-model="icon.size" class="custom-range" min="100" max="500" step="1">
+                        <input type="range" v-model="icon.size" class="custom-range" min="70" max="500" step="1">
                         <br>
                         <label>Angle: [{{icon.angle}}deg]</label>
                         <input type="range" v-model="icon.angle" class="custom-range" min="-360" max="360" step="1">
@@ -137,7 +137,7 @@ export default {
   },
   methods: {
     capture_img: function(){
-        html2canvas(document.getElementById("capture"), {allowTaint: true}).then(function(canvas) {
+        html2canvas(document.getElementById("capture"), { logging: true, profile: true, useCORS: true, allowTaint: true}).then(function(canvas) {
             document.body.appendChild(canvas);
         });
     },
@@ -147,7 +147,7 @@ export default {
   },
   data: function(){ return{
         icon: {
-            size: 60,
+            size: 70,
             color: "#f26d6f",
             fa_class: "fas fa-address-book",
             background: false,
