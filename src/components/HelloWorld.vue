@@ -50,7 +50,7 @@
                     <h2>Icon</h2>
                     <div class="form-group">
                         <label>Name: </label>
-                        <v-select :options="fa_icons" v-model="icon.fa_class" v-on:keydown.enter.prevent='addCategory'>
+                        <v-select :filter="optionsFilter" v-model="icon.fa_class" v-on:keydown.enter.prevent='addCategory'>
                             <template slot="selected-option" slot-scope="option">
                                 <div class="flex">
                                     <div class="col">
@@ -141,8 +141,12 @@ export default {
     msg: String
   },
   methods: {
+    normalize_file_name(name){
+        return name.replaceAll(' ', '_').replaceAll('-', '_')
+    },
     capture_img: function(){
-        var filename = this.icon.fa_class+'.png'
+        var filaname_prefix = "imgen_"
+        var filename = filaname_prefix+this.normalize_file_name(this.icon.fa_class)+'.png'
         domtoimage.toBlob(document.getElementById('capture'))
             .then(function (blob) {
                 FileSaver.saveAs(blob, filename);
@@ -153,13 +157,20 @@ export default {
     },
     restore_saved_color: function(event){
         this.icon.color = event.currentTarget.style.backgroundColor
+    },
+    optionsFilter(options, search) {
+      options = []
+      if(search.length>=3){
+            options = this.fa_icons.filter(word => word.indexOf(search) != -1);
+      }
+      return options
     }
   },
   data: function(){ return{
         icon: {
             size: 70,
             color: "#f26d6f",
-            fa_class: "fas fa-address-book",
+            fa_class: "fab fa-font-awesome",
             background: false,
             angle: 0,
         },
