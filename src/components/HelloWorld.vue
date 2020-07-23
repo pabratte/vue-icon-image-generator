@@ -2,29 +2,33 @@
   <div class="hello">
     <div id="app" class="container">
             <div class="row">
-            <div class="col-md-6" style="position: fixed; top: 150px; left: 70px;" >
-                <div class="row">                
-                    <div id="capture" class="myCanvas" v-bind:style="{width: canvas.size+'px', height: canvas.size+'px'}" >
-                        <div  style="width: 100%; height: 100%;" v-bind:style="{backgroundcolor: canvas.background}">
+            <div class="col-md-6" style="position: fixed;" >
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4" style="text-align: center;">                
+                        <div id="capture" class="myCanvas" v-bind:style="{width: canvas.size+'px', height: canvas.size+'px'}" >
+                            <div  class="frame" style="width: 100%; height: 100%;" v-bind:style="{backgroundcolor: canvas.background}">
 
+                            </div>
+                            <div class="frame" v-bind:style="{ 
+                                                                borderRadius: frame.border_radius+'%', 
+                                                                background: frame.color,
+                                                                width: frame.size+'%',
+                                                                height: frame.size+'%',
+                                                                transform: 'rotate('+frame.angle+'deg)',
+                                                                top: ((canvas.size/2)-(canvas.size*frame.size/200))+'px',
+                                                                left: ((canvas.size/2)-(canvas.size*frame.size/200))+'px',
+                                                                display: frame.visible?'block':'none'
+                                                            }">
+            
+                            </div>
+                            <div class="frame" style="padding: 0; margin: 0; overflow: hidden;">
+                                <i v-bind:style="{color: icon.color, fontSize: icon.size+'px', transform: 'rotate('+icon.angle+'deg)'}" v-bind:class="icon.fa_class"></i>
+                            </div>
+                            
                         </div>
-                        <div class="frame" v-bind:style="{ 
-                                                            borderRadius: frame.border_radius+'%', 
-                                                            background: frame.color,
-                                                            width: frame.size+'%',
-                                                            height: frame.size+'%',
-                                                            transform: 'rotate('+frame.angle+'deg)',
-                                                            top: ((canvas.size/2)-(canvas.size*frame.size/200))+'px',
-                                                            left: ((canvas.size/2)-(canvas.size*frame.size/200))+'px',
-                                                            display: frame.visible?'block':'none'
-                                                        }">
-          
-                        </div>
-                        <div class="frame" style="padding: 0; margin: 0; overflow: hidden;">
-                            <i v-bind:style="{color: icon.color, fontSize: icon.size+'px', transform: 'rotate('+icon.angle+'deg)'}" v-bind:class="icon.fa_class"></i>
-                        </div>
-                        
                     </div>
+                    <div class="col-md-4"></div>
                 </div>
                 <br>
                 <button class="btn btn-lg btn-primary" v-on:click="capture_img">Export</button>
@@ -122,7 +126,8 @@
 import Vue from 'vue'
 import vSelect from 'vue-select'
 import BootstrapVue from 'bootstrap-vue'
-import html2canvas from 'html2canvas';
+import domtoimage from 'dom-to-image';
+import FileSaver from 'file-saver';
 
 Vue.use(BootstrapVue)
 Vue.component('v-select', vSelect)
@@ -137,9 +142,14 @@ export default {
   },
   methods: {
     capture_img: function(){
-        html2canvas(document.getElementById("capture"), { logging: true, profile: true, useCORS: true, allowTaint: true}).then(function(canvas) {
-            document.body.appendChild(canvas);
-        });
+        var filename = this.icon.fa_class+'.png'
+        domtoimage.toBlob(document.getElementById('capture'))
+            .then(function (blob) {
+                FileSaver.saveAs(blob, filename);
+            })
+            .catch(function (error) {
+                console.error('oops, something went wrong!', error);
+            });
     },
     restore_saved_color: function(event){
         this.icon.color = event.currentTarget.style.backgroundColor

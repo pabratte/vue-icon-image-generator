@@ -25,10 +25,8 @@ form .form-group{
 
 .myCanvas{
     text-align: center;
-    position: relative;
     background: white;
-    margin: auto auto;
-    overflow: hidden;
+    position: relative;
 }
 
 .bg-div{
