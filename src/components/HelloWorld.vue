@@ -23,7 +23,8 @@
             
                             </div>
                             <div class="frame" style="padding: 0; margin: 0; overflow: hidden;">
-                                <i v-bind:style="{color: icon.color, fontSize: icon.size+'px', transform: 'rotate('+icon.angle+'deg)'}" v-bind:class="icon.fa_class"></i>
+                                <i v-bind:style="{color: icon.color, fontSize: icon.size+'px', transform: 'rotate('+icon.angle+'deg)', margin: icon.margin+'px'} " v-bind:class="icon.fa_class"></i>
+                                <i v-show="icon2_check" v-bind:style="{color: icon2.color, fontSize: icon2.size+'px', transform: 'rotate('+icon2.angle+'deg)', margin: icon2.margin+'px'}" v-bind:class="icon2.fa_class"></i>
                             </div>
                             
                         </div>
@@ -73,6 +74,8 @@
                         <br>
                         <label>Angle: [{{icon.angle}}deg]</label>
                         <input type="range" v-model="icon.angle" class="custom-range" min="-360" max="360" step="1">
+                        <label>Margin: [{{icon.margin}}px]</label>
+                        <input type="range" v-model="icon.margin" class="custom-range" min="-360" max="360" step="1">
                         <label>Color: </label>
                         <br>
                         <input type="color" v-model="icon.color">
@@ -80,8 +83,8 @@
                         <label>Colores guardados: </label>
                         <br>
                         <div class="saved-colors-container">
-                            <div class="color-button" style="background-color: #E12D2F;" v-on:click="restore_saved_color"></div>
-                            <div class="color-button" style="background-color: #61c2f2;" v-on:click="restore_saved_color"></div>
+                            <div class="color-button" style="background-color: #E12D2F;" @click="restore_saved_color($event, 1)"></div>
+                            <div class="color-button" style="background-color: #61c2f2;" @click="restore_saved_color($event, 1)"></div>
                         </div>
              
                         <!--
@@ -92,6 +95,48 @@
                             <option value="#fbafaf">#fbafaf</option>
                         </select>
                         -->
+                        <br>
+                    </div>
+                    <h2>Icon 2</h2>
+                    <input type="checkbox" v-model="icon2_check">
+                    <label>Visible</label>
+                    <div class="form-group">
+                        <label>Name: </label>
+                        <v-select :filter="optionsFilter" v-model="icon2.fa_class" v-on:keydown.enter.prevent='addCategory'>
+                            <template slot="selected-option" slot-scope="option">
+                                <div class="flex">
+                                    <div class="col">
+                                        <i :class="option.label"></i>
+                                        &nbsp;{{option.label}}
+                                    </div>
+                                </div>
+                                </template>
+                                <template slot="option" slot-scope="option">
+                                    <div class="col">
+                                    <i :class="option.label"></i>
+                                    &nbsp;{{ option.label }}
+                                    </div>
+                                </template>
+
+                        </v-select>
+                        <br>
+                        <label>Size: [{{icon2.size}}px]</label>
+                        <input type="range" v-model="icon2.size" class="custom-range" min="70" max="500" step="1">
+                        <br>
+                        <label>Angle: [{{icon2.angle}}deg]</label>
+                        <input type="range" v-model="icon2.angle" class="custom-range" min="-360" max="360" step="1">
+                        <label>Margin: [{{icon2.margin}}px]</label>
+                        <input type="range" v-model="icon2.margin" class="custom-range" min="-360" max="360" step="1">
+                        <label>Color: </label>
+                        <br>
+                        <input type="color" v-model="icon2.color">
+                        <br>
+                        <label>Colores guardados: </label>
+                        <br>
+                        <div class="saved-colors-container">
+                            <div class="color-button" style="background-color: #E12D2F;" @click="restore_saved_color($event, 2)"></div>
+                            <div class="color-button" style="background-color: #61c2f2;" @click="restore_saved_color($event,2)"></div>
+                        </div>
                         <br>
                     </div>
 
@@ -111,6 +156,9 @@
                         <label>Color: </label>
                         <br>
                         <input type="color" v-model="frame.color">
+                        <div class="saved-colors-container">
+                            <div class="color-button" style="background-color: #F7F7F7;" v-on:click="restore_saved_color_frame"></div>
+                        </div>
                     </div>
                     
                 </form>
@@ -138,7 +186,8 @@ Vue.config.productionTip = false
 export default {
   name: 'HelloWorld',
   props: {
-    msg: String
+    msg: String,
+    icon2_check: Boolean
   },
   methods: {
     normalize_file_name(name){
@@ -155,8 +204,16 @@ export default {
                 console.error('oops, something went wrong!', error);
             });
     },
-    restore_saved_color: function(event){
-        this.icon.color = event.currentTarget.style.backgroundColor
+    restore_saved_color: function(event, icon){
+        if(icon == 1){
+            this.icon.color = event.currentTarget.style.backgroundColor
+        }else{
+            this.icon2.color = event.currentTarget.style.backgroundColor
+        }
+        
+    },
+    restore_saved_color_frame: function(event){
+        this.frame.color = event.currentTarget.style.backgroundColor
     },
     optionsFilter(options, search) {
       options = []
@@ -173,6 +230,15 @@ export default {
             fa_class: "fab fa-font-awesome",
             background: false,
             angle: 0,
+            margin:0
+        },
+        icon2: {
+            size: 70,
+            color: "#f26d6f",
+            fa_class: "fab fa-font-awesome",
+            background: false,
+            angle: 0,
+            margin:0,
         },
         canvas: {
             size: 170,
@@ -187,6 +253,36 @@ export default {
         }
         ,
         fa_icons: [
+            'far fa-1',
+            'far fa-2',
+            'far fa-3',
+            'far fa-4',
+            'far fa-5',
+            'far fa-6',
+            'far fa-7',
+            'far fa-8',
+            'far fa-9',
+            'far fa-0',
+            'far fa-square-1',
+            'far fa-square-2',
+            'far fa-square-3',
+            'far fa-square-4',
+            'far fa-square-5',
+            'far fa-square-6',
+            'far fa-square-7',
+            'far fa-square-8',
+            'far fa-square-9',
+            'far fa-square-0',
+            'far fa-circle-1',
+            'far fa-circle-2',
+            'far fa-circle-3',
+            'far fa-circle-4',
+            'far fa-circle-5',
+            'far fa-circle-6',
+            'far fa-circle-7',
+            'far fa-circle-8',
+            'far fa-circle-9',
+            'far fa-circle-0',
             'fab fa-500px',
             'fab fa-accessible-icon',
             'fab fa-accusoft',
