@@ -22,7 +22,10 @@
                                                             }">
             
                             </div>
-                            <div class="frame" style="padding: 0; margin: 0; overflow: hidden;">
+
+                            <div v-if="tag_icon" class="frame" style="padding: 0; margin: 0; overflow: hidden;" v-html="entire_icon" id="content-icons" >
+                            </div>
+                            <div v-else class="frame" style="padding: 0; margin: 0; overflow: hidden;">
                                 <i v-bind:style="{color: icon.color, fontSize: icon.size+'px', transform: 'rotate('+icon.angle+'deg)', margin: icon.margin+'px'} " v-bind:class="icon.fa_class"></i>
                                 <i v-show="icon2_check" v-bind:style="{color: icon2.color, fontSize: icon2.size+'px', transform: 'rotate('+icon2.angle+'deg)', margin: icon2.margin+'px'}" v-bind:class="icon2.fa_class"></i>
                             </div>
@@ -37,8 +40,15 @@
                     
                 </div>
             </div>
+            
             <div class="col-md-6 offset-md-6" >
-                <form>
+                <h4 style="display: inline;" class="m-4">Utilizar etiquetas de iconos</h4>
+                <input type="checkbox" v-model="tag_icon" @change="entire_icon=''">
+                
+
+                
+
+                
                     <h2>Canvas</h2>
                     <div class="form-group">
                             <label for="canvasSize">Canvas size [{{canvas.size}}px]</label>
@@ -48,97 +58,121 @@
                             <input type="color" v-model="canvas.background">
                     </div>
 
-                    <h2>Icon</h2>
-                    <div class="form-group">
-                        <label>Name: </label>
-                        <v-select :filter="optionsFilter" v-model="icon.fa_class" v-on:keydown.enter.prevent='addCategory'>
-                            <template slot="selected-option" slot-scope="option">
-                                <div class="flex">
-                                    <div class="col">
-                                        <i :class="option.label"></i>
-                                        &nbsp;{{option.label}}
-                                    </div>
-                                </div>
-                                </template>
-                                <template slot="option" slot-scope="option">
-                                    <div class="col">
-                                    <i :class="option.label"></i>
-                                    &nbsp;{{ option.label }}
-                                    </div>
-                                </template>
-
-                        </v-select>
-                        <br>
-                        <label>Size: [{{icon.size}}px]</label>
-                        <input type="range" v-model="icon.size" class="custom-range" min="70" max="500" step="1">
-                        <br>
-                        <label>Angle: [{{icon.angle}}deg]</label>
-                        <input type="range" v-model="icon.angle" class="custom-range" min="-360" max="360" step="1">
-                        <label>Margin: [{{icon.margin}}px]</label>
-                        <input type="range" v-model="icon.margin" class="custom-range" min="-360" max="360" step="1">
-                        <label>Color: </label>
-                        <br>
-                        <input type="color" v-model="icon.color">
-                        <br>
-                        <label>Colores guardados: </label>
-                        <br>
-                        <div class="saved-colors-container">
-                            <div class="color-button" style="background-color: #E12D2F;" @click="restore_saved_color($event, 1)"></div>
-                            <div class="color-button" style="background-color: #61c2f2;" @click="restore_saved_color($event, 1)"></div>
+                    
+                    <Transition name="bounce">
+                        <div v-if="tag_icon" key="1">
+                            <h2>Entire icon tag</h2>
+                            <div class="form-group">
+                                <label>Icon: </label>
+                                <input type="text" v-model="entire_icon" @change="set_icon()" class="form-control">
+                                <br>
+                                <label>Size: [{{icon_tag.size}}px]</label>
+                                <input type="range" v-model="icon_tag.size" class="custom-range" min="70" max="500" step="1" @change="check_icon()">
+                                <br>
+                                <label>Angle: [{{icon_tag.angle}}deg]</label>
+                                <input type="range" v-model="icon_tag.angle" class="custom-range" min="-360" max="360" step="1" @change="check_icon()">
+                            </div>
                         </div>
-             
-                        <!--
-                            <select v-model="icon.color" class="form-control" value="#20ff41">
-                            <option value="#99e1e5">#99e1e5</option>
-                            <option value="#f3e8cb">#f3e8cb</option>
-                            <option value="#f2c6b4">#f2c6b4</option>
-                            <option value="#fbafaf">#fbafaf</option>
-                        </select>
-                        -->
-                        <br>
-                    </div>
-                    <h2>Icon 2</h2>
-                    <input type="checkbox" v-model="icon2_check">
-                    <label>Visible</label>
-                    <div class="form-group">
-                        <label>Name: </label>
-                        <v-select :filter="optionsFilter" v-model="icon2.fa_class" v-on:keydown.enter.prevent='addCategory'>
-                            <template slot="selected-option" slot-scope="option">
-                                <div class="flex">
-                                    <div class="col">
-                                        <i :class="option.label"></i>
-                                        &nbsp;{{option.label}}
-                                    </div>
-                                </div>
-                                </template>
-                                <template slot="option" slot-scope="option">
-                                    <div class="col">
-                                    <i :class="option.label"></i>
-                                    &nbsp;{{ option.label }}
-                                    </div>
-                                </template>
+                    </Transition>
+                    
 
-                        </v-select>
-                        <br>
-                        <label>Size: [{{icon2.size}}px]</label>
-                        <input type="range" v-model="icon2.size" class="custom-range" min="70" max="500" step="1">
-                        <br>
-                        <label>Angle: [{{icon2.angle}}deg]</label>
-                        <input type="range" v-model="icon2.angle" class="custom-range" min="-360" max="360" step="1">
-                        <label>Margin: [{{icon2.margin}}px]</label>
-                        <input type="range" v-model="icon2.margin" class="custom-range" min="-360" max="360" step="1">
-                        <label>Color: </label>
-                        <br>
-                        <input type="color" v-model="icon2.color">
-                        <br>
-                        <label>Colores guardados: </label>
-                        <br>
-                        <div class="saved-colors-container">
-                            <div class="color-button" style="background-color: #E12D2F;" @click="restore_saved_color($event, 2)"></div>
-                            <div class="color-button" style="background-color: #61c2f2;" @click="restore_saved_color($event,2)"></div>
+                    
+                    <Transition-group name="bounce">
+                        <div v-if="!tag_icon" key="1">
+                            <h2>Icon</h2>
+                            <div class="form-group">
+                                <label>Name: </label>
+                                <v-select :filter="optionsFilter" v-model="icon.fa_class" v-on:keydown.enter.prevent='addCategory'>
+                                    <template slot="selected-option" slot-scope="option">
+                                        <div class="flex">
+                                            <div class="col">
+                                                <i :class="option.label"></i>
+                                                &nbsp;{{option.label}}
+                                            </div>
+                                        </div>
+                                        </template>
+                                        <template slot="option" slot-scope="option">
+                                            <div class="col">
+                                            <i :class="option.label"></i>
+                                            &nbsp;{{ option.label }}
+                                            </div>
+                                        </template>
+
+                                </v-select>
+                                <br>
+                                <label>Size: [{{icon.size}}px]</label>
+                                <input type="range" v-model="icon.size" class="custom-range" min="70" max="500" step="1">
+                                <br>
+                                <label>Angle: [{{icon.angle}}deg]</label>
+                                <input type="range" v-model="icon.angle" class="custom-range" min="-360" max="360" step="1">
+                                <label>Margin: [{{icon.margin}}px]</label>
+                                <input type="range" v-model="icon.margin" class="custom-range" min="-360" max="360" step="1">
+                                <label>Color: </label>
+                                <br>
+                                <input type="color" v-model="icon.color">
+                                <br>
+                                <label>Colores guardados: </label>
+                                <br>
+                                <div class="saved-colors-container">
+                                    <div class="color-button" style="background-color: #E12D2F;" @click="restore_saved_color($event, 1)"></div>
+                                    <div class="color-button" style="background-color: #61c2f2;" @click="restore_saved_color($event, 1)"></div>
+                                </div>
+                    
+                                <!--
+                                    <select v-model="icon.color" class="form-control" value="#20ff41">
+                                    <option value="#99e1e5">#99e1e5</option>
+                                    <option value="#f3e8cb">#f3e8cb</option>
+                                    <option value="#f2c6b4">#f2c6b4</option>
+                                    <option value="#fbafaf">#fbafaf</option>
+                                </select>
+                                -->
+                                <br>
+                            </div>
+                            <h2>Icon 2</h2>
+                            <input type="checkbox" v-model="icon2_check">
+                            <label>Visible</label>
+                            <div class="form-group">
+                                <label>Name: </label>
+                                <v-select :filter="optionsFilter" v-model="icon2.fa_class" v-on:keydown.enter.prevent='addCategory'>
+                                    <template slot="selected-option" slot-scope="option">
+                                        <div class="flex">
+                                            <div class="col">
+                                                <i :class="option.label"></i>
+                                                &nbsp;{{option.label}}
+                                            </div>
+                                        </div>
+                                        </template>
+                                        <template slot="option" slot-scope="option">
+                                            <div class="col">
+                                            <i :class="option.label"></i>
+                                            &nbsp;{{ option.label }}
+                                            </div>
+                                        </template>
+
+                                </v-select>
+                                <br>
+                                <label>Size: [{{icon2.size}}px]</label>
+                                <input type="range" v-model="icon2.size" class="custom-range" min="70" max="500" step="1">
+                                <br>
+                                <label>Angle: [{{icon2.angle}}deg]</label>
+                                <input type="range" v-model="icon2.angle" class="custom-range" min="-360" max="360" step="1">
+                                <label>Margin: [{{icon2.margin}}px]</label>
+                                <input type="range" v-model="icon2.margin" class="custom-range" min="-360" max="360" step="1">
+                                <label>Color: </label>
+                                <br>
+                                <input type="color" v-model="icon2.color">
+                                <br>
+                                <label>Colores guardados: </label>
+                                <br>
+                                <div class="saved-colors-container">
+                                    <div class="color-button" style="background-color: #E12D2F;" @click="restore_saved_color($event, 2)"></div>
+                                    <div class="color-button" style="background-color: #61c2f2;" @click="restore_saved_color($event,2)"></div>
+                                </div>
+                                <br>
+                            </div>
                         </div>
-                        <br>
-                    </div>
+                    </Transition-group>
+                    
 
                     <h2>Frame</h2>
                     <div class="form-group">
@@ -161,7 +195,7 @@
                         </div>
                     </div>
                     
-                </form>
+                
                 
             </div>
             </div>
@@ -190,6 +224,17 @@ export default {
     icon2_check: Boolean
   },
   methods: {
+    set_icon(){
+        let icon_tag = document.querySelector('#content-icons i') 
+        let initial_style_attr = icon_tag.getAttribute("style")
+        icon_tag.setAttribute('style', initial_style_attr + ' font-size:'+this.icon_tag.size+'px;' + ' transform:'+'rotate('+this.icon_tag.angle+'deg);')
+    },
+    check_icon(){
+        let icon_tag = document.querySelector('#content-icons i') 
+
+        icon_tag.style.fontSize = this.icon_tag.size + 'px'
+        icon_tag.style.transform = 'rotate('+this.icon_tag.angle+'deg)'
+    },
     normalize_file_name(name){
         return name.replaceAll(' ', '_').replaceAll('-', '_')
     },
@@ -224,6 +269,13 @@ export default {
     }
   },
   data: function(){ return{
+        entire_icon:'',
+        tag_icon:false,
+        icon_tag: {
+            size: 70,
+            background: false,
+            angle: 0,
+        },
         icon: {
             size: 70,
             color: "#f26d6f",
